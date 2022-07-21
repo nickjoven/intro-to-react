@@ -156,7 +156,7 @@ The more dynamic, the better! Right?
 
 https://learning.flatironschool.com/courses/5207/assignments/194711?module_item_id=437855
 
-A functional component is a can takes props as an argument use those props to dynamically affect the JSX that is returned.
+A functional component can take props as an argument use those props to dynamically affect the JSX that is returned.
 
 In order for a components to serve as a template of JSX rather than a bunch of hard-coded information, you must use props.
 
