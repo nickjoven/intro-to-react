@@ -162,7 +162,7 @@ In order for components to serve as a template of JSX rather than a bunch of har
 
 https://www.geeksforgeeks.org/reactjs-defaultprops/#:~:text=The%20defaultProps%20is%20a%20React,default%20props%20for%20the%20class.
 
-Here's a tiny example.
+Here's a tiny example of props being used by a child component.
 
 ```javascript
 function ExampleFunction(props) {
@@ -170,24 +170,10 @@ function ExampleFunction(props) {
 }
 ```
 
-The placement of props makes sense. However, `props.value` is something we haven't explicitly seen before. Presumably, the simplest examples will fail to properly demonstrate the scalability of the concept, but here goes:
+The important thing, though, is that the point is to use parent components to specify properties so that the prop-using children can render different things.
 
 ```javascript
-class ParentComponent extends Component {
-    render() {
-        return (
-            <ChildComponent name="First Child" />
-        )
-    }
-}
-
-const ChildComponent = (props) => {
-    return <p>{props.name}</p>
-}
-```
-
-```javascript
-// assuming you have ParentComponent and ChildComponent in the same folder
+// ParentComponent.js
 import React, { Component } from 'react'
 import ChildComponent from './childComponent'
 
