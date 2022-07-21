@@ -227,8 +227,6 @@ So, how might we be more dynamic in the above example?
 
 Let's think about the purpose of the child and parent components.
 
-The child is there for us to dynamically pass specific information. The parent is there to instruct React on what to do with the information.
-
 Assume that I wanted to be able to create `<p>` tags within `<h3>` elements, and provide each `<p>` tag with different text.
 
 This is what I would do:
