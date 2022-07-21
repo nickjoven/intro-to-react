@@ -142,7 +142,7 @@ Our document has an element somewhere with the ID 'root.' Render(element) will d
 
 The next thing to break down is the use of *props* here.
 
-### What are Props, and Why Should I Care
+## What are Props, and Why Should I Care
 
 I have way too many links shared here, because I took way too long to wrap my head around the concept of props.
 
@@ -150,7 +150,7 @@ https://www.freecodecamp.org/news/how-to-use-props-in-react/#:~:text=What%20are%
 
 https://dmitripavlutin.com/react-props/
 
-Props stands for properties--it's a shorter word but barely. Kind of hate it, but whatever.. They are important for making reusable code, much in the way that parameters allow functions to serve general uses.
+Props stands for properties--it's a shorter word (barely). Kind of hate it, but whatever. They are important for making reusable code, much in the way that parameters allow functions to serve general uses.
 
 The more dynamic, the better! Right?
 
