@@ -847,18 +847,44 @@ import React from "react";
 import { getRandomColor } from "./randomColorGenerator.js";
 
 const Child = ({ onChangeColor, color }) => {
-    const handlelick = () => {
-        const newColor = getRandomColor()
-        onChangeColor(newColor)
-    }
+  const handlelick = () => {
+    const newColor = getRandomColor()
+    onChangeColor(newColor)
+  }
   return (
-    <div 
-      onClick={onChangeColor}
+    <div
+      onClick={handlelick}
       className='child'
       style={{ backgroundColor: color }}
-      />
+    />
   )
 }
 
 export default Child;
 ```
+
+So, uh, it compiles, but that is for sure confusing.
+
+I'll definitely have to review the code and the relationships again, but at least it's under my fingers. Might help to show off the getRandomColor function as well.
+
+```javascript
+// randomColorGenerator.js
+
+// Nothing in this file needs to be altered (but it is your solution so feel free to!)
+export function getRandomColor() {
+  // this function generates a random hex color from the letters below
+  const letters = "123456789AB"; // <-- cutting off top end so we get lighter colors
+  let color = "#";
+  for (let i = 0; i < 3; i++) {
+    color += letters[Math.floor(Math.random() * 11)];
+  }
+  return color;
+}
+```
+
+This is a randomly generated string, essentially.
+
+Next step should be applying many of these concepts. Probably practicing code challenges/labs and trying to build ONE thing.
+
+
+
