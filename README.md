@@ -265,16 +265,9 @@ const ChildComponent = (props) => {
     )
 }
 ```
-
-I only like, get 60% of what is going on here. Or, it's that I understand, but that there is a sizable disconnect.
-
 ## WHEN TO USE PROPS
 
 If you're out here trying to *dynamically* render things then maybe you need to use some *props*.
-
-Okay, cool. So any time you need some information in a parent element to have dynamic potential, you can reference child components that use props.
-
-You have to specify what information needs to change within the parent component (which seems to defeat the entire purpose) but I'm certain there is more to it than that.
 
 Conceptually, you are "passing down" information to child components--which seems to just mean that you are *specifying* details in the parent. These details are "passed" to the children, who then figure out what they are supposed to do with the info.
 
@@ -302,7 +295,7 @@ But, if a parent component passes down properties to the child component, then c
 console.log(props) //=> {propertyA: 123, propertyB: 456, propertyC: 789}
 ```
 
-Sensible. More so than it was to begin with.
+Sensible. 
 
 So if I want to go back to the example from earlier...
 
@@ -884,5 +877,50 @@ This is a randomly generated string, essentially.
 
 Next step should be applying many of these concepts. Probably practicing code challenges/labs and trying to build ONE thing.
 
+### A note on Information Flow
 
+You *COULD* pass the entire setter function down to child components and achieve the desired results. To avoid giving that level of control to the children, though, you can pass a function that invokes the setter function in the way that it is intended to update the state--you don't necessarily want the child to interact with state directly. If all they need is to be able to update the state in the way state is handled by the parent, you should use a callback function!!!!!
+
+
+## Day 4 Drills
+
+```
+Write a React component called App returns a div with an h1 that has the innerText of "Game Show", a button with the inner text of "Click me" and an h3 that starts empty, and an input with the type of "text". App has a 2 pieces of state: The first one is a counter variable called "score" that increments by 1 point every time the button element is clicked. The second state is a text variable called "username" that will update the h3 element's inner text to reflect whatever the user enters into the input element.
+```
+
+```javascript
+import React, { useState } from 'react';
+import './App.css';
+
+const App = () => {
+  const [score, setScore] = useState(0)
+  const [username, updateUser] = useState('')
+
+  const handleScore = () => {
+    setScore(score + 1)
+  }
+
+  const handleUser = (e) => {
+    updateUser(e.target.value)
+  }
+
+  return (
+    <div>
+      <h1>Game Show</h1>
+      <button onClick={handleScore}>Click Me!</button>
+      <h4>Score: {score}</h4> // optional
+      <h3>{
+      username
+      ? username
+      : ''
+      }</h3>
+      <input type='text' onChange={(e) => handleUser(e)}></input>
+    </div>
+  );
+}
+
+export default App;
+```
+
+Look at me, I used handler functions.
 
