@@ -317,10 +317,10 @@ In a way, the child components are kind of like function declarations, and they 
 ## Day 2
 
 Morning Drills.
-```
-- Create a function component called App (using arrow function syntax) 3 times!
-- App should return a div with an h1 that says "Hello React" inside
-- Be sure to export the component at the bottom
+```javascript
+// - Create a function component called App (using arrow function syntax) 3 times!
+// - App should return a div with an h1 that says "Hello React" inside
+// - Be sure to export the component at the bottom
 ```
 
 ```javascript
@@ -549,9 +549,9 @@ const Bookshelf = (props) => {
 
 ### Day 3 Drills
 
-```
-Write a component called NewsFeed that returns a div that has 2 child components called Post. Be sure to export and import your files properly.
-Write a component called Post that takes accepts 2 props called "likes" (a number) and "image_url" (a string). The Post component should return a div that has an img tag and a paragraph tag that implements the given props in a manner that makes sense.
+```javascript
+// Write a component called NewsFeed that returns a div that has 2 child components called Post. Be sure to export and import your files properly.
+// Write a component called Post that takes accepts 2 props called "likes" (a number) and "image_url" (a string). The Post component should return a div that has an img tag and a paragraph tag that implements the given props in a manner that makes sense.
 ```
 
 ```javascript
@@ -884,8 +884,8 @@ You *COULD* pass the entire setter function down to child components and achieve
 
 ## Day 4 Drills
 
-```
-Write a React component called App returns a div with an h1 that has the innerText of "Game Show", a button with the inner text of "Click me" and an h3 that starts empty, and an input with the type of "text". App has a 2 pieces of state: The first one is a counter variable called "score" that increments by 1 point every time the button element is clicked. The second state is a text variable called "username" that will update the h3 element's inner text to reflect whatever the user enters into the input element.
+```javascript
+// Write a React component called App returns a div with an h1 that has the innerText of "Game Show", a button with the inner text of "Click me" and an h3 that starts empty, and an input with the type of "text". App has a 2 pieces of state: The first one is a counter variable called "score" that increments by 1 point every time the button element is clicked. The second state is a text variable called "username" that will update the h3 element's inner text to reflect whatever the user enters into the input element.
 ```
 
 ```javascript
