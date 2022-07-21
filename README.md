@@ -205,7 +205,7 @@ class ParentComponent extends Component {
 export default ParentComponent
 ```
 
-Alright, in the above example, ParentComponent is calling ChildComponent. In the h3 tag. Calling a component is similar to writing an HTML tag, you use `<these guys>` but you `<Capitalize />` the first letter. Referencing ChildComponent here is like using a varaible. You are telling React to replace ChildComponent with whatever ChildComponent returns.
+Alright, in the above example, ParentComponent is calling ChildComponent. In the h3 tag. Calling a component is similar to writing an HTML tag, you use `<these guys>` but you `<Capitalize />` the first letter. Referencing ChildComponent here is like using a variable. You are telling React to replace ChildComponent with whatever ChildComponent returns.
 
 ```javascript
 // childComponent.js
