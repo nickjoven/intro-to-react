@@ -600,6 +600,23 @@ export default NewsFeed
 ```
 I'm leaving out the drawing, but the point is that NewsFeed.js is a parent, Post.js is a child, and the props specified in NewsFeed.js are dynamically rendered according to the return value of Post.js.
 
+## Event Handling in React
+
+React allows you to attach event handlers directly to DOM elements via attributes like onClick, onChange, and onSubmit. Note that you cannot give these attributes to React components directly.
+
+```javascript
+<button onClick={() => setCount(count + 1)}>
+```
+
+Remember this thing? It honestly doesn't need to be more complicated than that.
+
+```javascript
+<DOMelement onEvent={(event) => function }>
+```
+
+You can write the function then and there with arrow syntax or invoke a callback function. It pays to be abstract, so write the function outside where possible.
+
+
 # State State State State
 
 https://learning.flatironschool.com/courses/5207/assignments/194752?module_item_id=437889
@@ -661,11 +678,187 @@ const App = () => {
 export default App
 ```
 
-There is, allegedly, a reason to create a function that incorporates the setter function rather than invoking it directly but *I won't get into that right now.*
+There is a reason to create a function that incorporates the setter function rather than invoking it directly. We'll adjust some code later and explain why.
+
+If you think back to vanilla JavaScript, we would have needed to create/get the button element and the element that would display the count info as inner text, attach an event listener, increment the value, and then update the element with the count info.
+
+The cool stuff happens here:
+
+```javascript
+<button onClick={() => setCount(count + 1)}>
+```
+
+Let's break down what would happen upon the first click:
+
+1. `setCount(count + 1)` evaluates to `setCount(1)` which tells React's internal state must update count to 1.
+2. The internal state is updated.
+3. The entire `Counter` component is re-rendered.
+4. `useState`'s value is now 1.
+5. `count` is "set" to 1.
+6. `count` is rendered as 1.
+
+Honestly, you could summarize some of those steps. But this is the gist of state: you are able to tell React to render a default value, and that if the setter function is invoked, the page needs to be re-rendered with a new value for the state-dependent variable.
+
+## Setting State is Apparently Asynchronous
+
+JavaScript saves time by running synchronous code before running asynchronous code. This could cause an issue with console messages and other synchronous behaviors. You avoid problems by using callback syntax, in a very un-pretty way (IMO).
+
+Example:
+```javascript
+const Counter = () => {
+    const [currentCount, setCount] = useState(0)
+
+    const increment = () => {
+        setCount((currentCount) => currentCount + 1)
+        setCount((currentCount) => currentCount + 1)
+    }
+}
+```
+Ugh, nasty. Hate to look at it. But apparently using this callback syntax means that React will not look at the state of currentCount and add 1, it will look at the previous state of currentCount and add 1. This, I guess, gets around the idea that the React doesn't wait to update the current state but it WILL wait to get the value of the previous state. 
+
+And apparently you can use something called useEffect instead. But we aren't there yet!
+
+### Notes on State
+
+According to canvas, you should only use state sparingly. Only for values that are expected to change over the course of a component's life. I am doubtful that we know enough to properly demonstrate this concept, so, I'm moving on.
 
 
+### Lifting State Up
 
+Is your state uplifted? Mine isn't.
 
+If you have multiple components that rely on one state, you can lift the state to the lowest common parent component, or closest common ancestor in order for the state to be accessible.
 
+Anya showed me a great example of lifted state in action. Any components that are expected to render or set state need to have access to state or the setter function. Child components can get access by having it passed down from a parent component. You don't need to establish state anywhere it isn't being used, and the economical choice is to declare state in the closest common ancestor.
 
+It isn't hard. It's basically the exact same as passing properties.
 
+## Information Flow
+
+A child component can also send data up to the parent component by sending a callback function as props from parent to child. "Ownership" of the callback function belongs to the parent component, and data/state changes flow up to the owner, rather than affecting the child that invokes the callback function.
+
+Word salad.
+
+As usual, let us look at an example. The goal is to have this relationship:
+
+```
+App
+└───Parent
+    ├───Child
+    └───Child
+```
+and allow clicking on either child to change the color of the parent component.
+
+First, a state variable called color will live inside the parent component.
+
+```javascript
+// Parent.js
+import React, { useState } from "react";
+import { getRandomColor } from "./randomColorGenerator.js";
+import Child from "./Child";
+
+const Parent = () => {
+    const randomcolor = getRandomColor()
+    const [color, setColor] = useState(randomColor) // initial value for color state
+
+    const handleChangeColor = () => {
+        const newRandomColor = getRandomColor()
+        setColor(newRandomColor) // update color state to a new value
+    }
+
+    return (
+        <div className="parent" style={{ backgroundColor: color }}>
+           <Child onChangeColor={handleChangeColor} />
+           <Child onChangeColor={handleChangeColor} />
+        </div>
+    )
+}
+
+export default Parent
+```
+
+A quick rundown. Parent is a component function that will probably be called in an App.js component. Instead of `useState(getRandomColor())` we say `useState(randomColor)` where `randomColor = getRandomColor()` because callback syntax to avoid async problems. *Any time you need to set state based on the current value of state, you should use the callback syntax.* 
+
+Here's what the child components should look like:
+
+```javascript
+// Child.js
+import React from "react";
+
+const Child = ({ onChangeColor }) => {
+  console.log(onChangeColor)
+  return (
+    <div 
+      onClick={onChangeColor}
+      className='child'
+      style={{ backgroundColor: '#FFF' }}
+      />
+  )
+}
+
+export default Child;
+```
+
+So, with all of our pages linked and exported and imported, we should see that clicking on the child components indeed causes the parent function to change state. This is an example of inverse flow or whatever. We passed a property called `onChangeColor`, whose value is a function called `handleChangeColor` to the child component. In the child component, we destructure/rename the function to `onChangeColor`. On click, the function `onChangeColor` (which is the `handleChangeColor` function) fires, which causes the setter function to set a new random color for the parent.
+
+A bit exhausting, but, not that hard to really *get*. You pass the setter function to the child component, and when you invoke the setter function in the child, it updates the state of the parent.
+
+Fun stuff. Now let's really dive into it.
+
+I'm going to rewrite Parent.js and Child.js (slightly) to accomplish this deliverable:
+
+```
+- When either Child component is clicked, it should change its own background color to a random color, and the other Child component should change to that same color.
+```
+
+This isn't exactly as simple as the first part, because sibling components cannot directly pass data to each other. The workaround for this is **storing the color of the `Child` in the state of the `Parent` component. The `Parent` component will handle the passing of data to the children.
+
+```javascript
+// Parent.js
+import React, { useState } from "react";
+import { getRandomColor } from "./randomColorGenerator.js";
+import Child from "./Child";
+
+const Parent = () => {
+    const randomColor = getRandomColor()
+    const [color, setColor] = useState(randomColor)
+    const [childrenColor, setChildrenColor] = useState('#FFF')
+
+    const handleChangeColor = (newChildColor) => {
+        const newRandomColor = getRandomColor()
+        setColor(newRandomColor)
+        setChildrenColor(newChildColor)
+    }
+
+    return (
+        <div className="parent" style={{ backgroundColor: color }}>
+           <Child color={childrenColor} onChangeColor={handleChangeColor} />
+           <Child color={childrenColor} onChangeColor={handleChangeColor} />
+        </div>
+    )
+}
+
+export default Parent
+```
+
+```javascript
+// Child.js
+import React from "react";
+import { getRandomColor } from "./randomColorGenerator.js";
+
+const Child = ({ onChangeColor, color }) => {
+    const handlelick = () => {
+        const newColor = getRandomColor()
+        onChangeColor(newColor)
+    }
+  return (
+    <div 
+      onClick={onChangeColor}
+      className='child'
+      style={{ backgroundColor: color }}
+      />
+  )
+}
+
+export default Child;
+```
