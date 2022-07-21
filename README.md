@@ -158,7 +158,7 @@ https://learning.flatironschool.com/courses/5207/assignments/194711?module_item_
 
 A functional component can take props as an argument use those props to dynamically affect the JSX that is returned.
 
-In order for a components to serve as a template of JSX rather than a bunch of hard-coded information, you must use props.
+In order for components to serve as a template of JSX rather than a bunch of hard-coded information, you must use props.
 
 https://www.geeksforgeeks.org/reactjs-defaultprops/#:~:text=The%20defaultProps%20is%20a%20React,default%20props%20for%20the%20class.
 
