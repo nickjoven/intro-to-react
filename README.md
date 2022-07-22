@@ -788,7 +788,7 @@ I'm going to rewrite Parent.js and Child.js (slightly) to accomplish this delive
 - When either Child component is clicked, it should change its own background color to a random color, and the other Child component should change to that same color.
 ```
 
-This isn't exactly as simple as the first part, because sibling components cannot directly pass data to each other. The workaround for this is **storing the color of the `Child` in the state of the `Parent` component. The `Parent` component will handle the passing of data to the children.
+This isn't exactly as simple as the first part, because sibling components cannot directly pass data to each other. The workaround for this is **storing the color of the `Child` in the state of the `Parent` component.** The `Parent` component will handle the passing of data to the children.
 
 ```javascript
 // Parent.js
@@ -841,8 +841,6 @@ export default Child;
 ```
 
 So, uh, it compiles, but that is for sure confusing.
-
-I'll definitely have to review the code and the relationships again, but at least it's under my fingers. Might help to show off the getRandomColor function as well.
 
 ```javascript
 // randomColorGenerator.js
@@ -909,4 +907,56 @@ export default App;
 ```
 
 Look at me, I used handler functions.
+
+### Controlled Components
+
+Controlled components derive vlaues from state.
+
+Here is an example of a controlled form:
+
+```javascript
+import React, { useState } from 'react'
+
+const Form = () => {
+  const [firstName, setFirstName] = useState('John')
+  const [lastName, setLastName] = useState('Henry')
+
+  return (
+    <form>
+      <input type='text' value={firstName} />
+      <input type='text' value={LastName} />
+      <button type='submit'>Submit</button>
+    </form>
+  )
+}
+```
+The inputs in this example determine their value attributes according to state. Our two states are hard-coded as two strings, with no way to be updated. If we are to update state when input values are changed, you might expect that we should render the states on the page.
+
+To do so in a React-friendly way, we should make a bunch of separate components, and import them into the parent, etc etc etc.
+
+```javascript
+// ParentComponent.js
+import react, { useState } from 'react'
+import Form from './Form'
+```
+
+The handler function can look like this:
+
+```javascript
+const handleSubmit = (e) => {
+  e.preventDefault()
+  const newItem = {
+    id: uuid(),
+    name: itemName,
+    category: itemCategory,
+  }
+  console.log(newItem)
+}
+
+```
+
+### Princple of Least Privilege
+
+Only give access to data from a parent component to child components that need the data. Give the most specific version of that data available to avoid possible privilege issues.
+
 
