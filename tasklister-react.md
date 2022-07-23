@@ -61,6 +61,28 @@ const TaskForm = ({ handleSubmit }) => {
 export default TaskForm
 ```
 ```javascript
+// TaskList.js
+import React from "react";
+import Task from "./Task";
+
+const TaskList = ({ tasks }) => {
+    return (
+        <div>
+            <h3>My To-dos</h3>
+            <ul>
+                {tasks.map((element, index) => {
+                    return (
+                        <Task key={index} text={element} />
+                    )
+                })}
+            </ul>
+        </div>
+    )
+}
+
+export default TaskList
+```
+```javascript
 // Task.js
 import React from "react";
 
@@ -72,5 +94,4 @@ const Task = ( { text }) => {
 
 export default Task
 ```
-
 

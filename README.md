@@ -924,7 +924,7 @@ const Form = () => {
   return (
     <form>
       <input type='text' value={firstName} />
-      <input type='text' value={LastName} />
+      <input type='text' value={lastName} />
       <button type='submit'>Submit</button>
     </form>
   )
@@ -957,6 +957,10 @@ const handleSubmit = (e) => {
 
 ### Princple of Least Privilege
 
-Only give access to data from a parent component to child components that need the data. Give the most specific version of that data available to avoid possible privilege issues.
+Only give access to data from a parent component to child components that need the data. Give the most specific version of that data available to avoid possible privilege issues. Avoid giving "carte blanche" access or "giving your child your unlocked phone."
+
+## Day 5 Recap
+
+Will recap video as soon as it is posted.
 
 
