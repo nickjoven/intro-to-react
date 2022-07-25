@@ -42,19 +42,30 @@ export default Banner
 ```
 ```javascript
 // Taskform.js
-import React, { useState } from "react"
+import { useState } from 'react'
 
-const TaskForm = ({ handleSubmit }) => {
+const TaskForm = ({handleSubmit}) => {
     const [text, setText] = useState('')
+
+    const handleChange = (e) => {
+        setText(e.target.value)
+    }
+
     return (
-        <div>
-            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(text); e.target.reset(); setText('')}}>
-                <label>Task Description:</label>
-                <input type='text' onChange={(e) => { setText(e.target.value) }} placeholder='Description'/>
-                <input type='submit' value='Create New Task'/>
+        <div className='Task-Form'>
+            <form onSubmit={(e) => {
+                e.preventDefault()
+                handleSubmit(text)
+                e.target.reset()
+                setText('')
+            }}>
+                <label>Task Description: </label>
+                <input type='text' onChange={(e) => {
+                    handleChange(e)
+                }} />
+                <input type='submit' value='Create New Task' />
             </form>
         </div>
-
     )
 }
 

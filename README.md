@@ -955,6 +955,8 @@ const handleSubmit = (e) => {
 
 ```
 
+The benefit of all of this is that your input values are actually being determined by state, which gets updated by user input. Can't react much faster than that.
+
 ### Princple of Least Privilege
 
 Only give access to data from a parent component to child components that need the data. Give the most specific version of that data available to avoid possible privilege issues. Avoid giving "carte blanche" access or "giving your child your unlocked phone."
@@ -962,5 +964,84 @@ Only give access to data from a parent component to child components that need t
 ## Day 5 Recap
 
 Will recap video as soon as it is posted.
+
+## Day 6
+
+### Updating Arrays and Objects with useState
+
+You must create a copy of the array/object when attempting to create a new state based on modifications to that array/object. If you try to mutate an array/object directly, and then set the value of state to be the array/object, React will interpret the reference that the setter function is making as unchanged from the state value and will not re-render anything. *Or something*. Saying setState(state) signals that no updates are required.
+
+In other words, this example doesn't work:
+
+```javascript
+const defaultState = {
+  key: ''
+}
+const [state, setState] = useState(defaultState)
+
+const updateState = () => {
+  state[key] = 'new value'
+  setState(state)
+}
+```
+
+But, this would work:
+```javascript
+const actuallyUpdateState = () => {
+  setState({
+    ...state,
+    [key: 'new value']
+  })
+}
+```
+
+Here are generic examples for updating both arrays and objects.
+
+```javascript
+// Adding to an array
+const handleAdd = (todo) => {
+  setTodos([...todos, todo]);
+}
+
+//Removing from an array
+
+const handleRemove = (todo) => {
+  const newTodos = todos.filter((t) => t !== todo);
+  setTodos(newTodos);
+}
+
+
+// Updating an array
+
+const handleUpdate = (index, todo) => {
+  const newTodos = [...todos];
+  newTodos[index] = todo;
+  setTodos(newTodos);
+}
+```
+
+And for objects:
+
+```javascript
+// Adding to an object
+const handleAdd = (todo) => {
+  setTodos({...todos, [todo.id]: todo});
+}
+
+// Removing from an object
+const handleRemove = (todo) => {
+  const newTodos = {...todos}
+  delete newTodos[todo.id]
+  setTodos(newTodos);
+}
+
+// Updating an object
+const handleUpdate = (todo) => {
+  setTodos({...todos, [todo.id]: todo});
+}
+```
+
+
+
 
 
