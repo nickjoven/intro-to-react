@@ -1602,7 +1602,7 @@ So, to go over it again, here's what happens:
 1. searchTerm is a state managed in PlantList.
 2. searchedPlants is a filtered version of plants that will update on every re-render caused by setSearchTerm
 3. searchTerm and setSearchTerm are passed to Search.js
-4. searchedPlants is passed into PlantList. Every time the filtered array changes, a re-render occurs, passing an up-to-date searchedPlants array.
+4. searchedPlants is passed into PlantList. User input in Search updates the value of search, forcing a re-render and passing an up-to-date searchedPlants array.
 5. Within Search.js, we establish that a text input field is a controlled component by setting its value to searchTerm and giving it on onChange event to setSearchTerm as e.target.value
 6. Change events in the Search.js input invoke the setSearchTerm function which means we will re-render the page, affecting the displayed plants since the array that is passed down to PlantList is filtered by searchTerm.
 
