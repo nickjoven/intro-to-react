@@ -1165,3 +1165,449 @@ setState(objectState => {
 It, uh, has to do with async functions queuing up, I guess.
 
 
+## Using Controlled Components, Fetch Requests and Re-renders
+
+```javascript
+// within App.js
+import { useState, useEffect } from "react";
+
+import Header from "./components/Header";
+import ProjectForm from "./components/ProjectForm";
+import ProjectList from "./components/ProjectList";
+
+const App = () => {
+  const [projects, setProjects] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [selectedPhase, setSelectedPhase] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const onAddProject = (newProject) => {
+    setProjects(projects => {
+      return [...projects, newProject]
+    })
+  }
+
+  const onToggleDarkMode = () => {
+    setIsDarkMode(isDarkMode => !isDarkMode)
+  }
+
+  useEffect(() => {
+    console.log('side effect')
+    let url;
+    if (selectedPhase && searchQuery) {
+      url = `http://localhost:4000/projects?phase=${selectedPhase}&q=${encodeURI(searchQuery)}`;
+    } else if (searchQuery) {
+      url = `http://localhost:4000/projects?q=${encodeURI(searchQuery)}`;
+    } else if (selectedPhase) {
+      url = `http://localhost:4000/projects?phase=${selectedPhase}`;
+    } else {
+      url = "http://localhost:4000/projects";
+    }
+    fetch(url)
+      .then((res) => res.json())
+      .then((projects) => setProjects(projects));
+  }, [selectedPhase, searchQuery])
+
+  console.log('rendering');
+  return (
+    <div className={isDarkMode ? "App" : "App light"}>
+      <Header isDarkMode={isDarkMode} onToggleDarkMode={onToggleDarkMode} />
+      <ProjectForm onAddProject={onAddProject}  />
+      <ProjectList
+        projects={projects}
+        setSelectedPhase={setSelectedPhase}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
+    </div>
+  );
+};
+
+export default App;
+```
+```javascript
+// ProjectForm
+import { useState } from 'react'
+
+const initialFormState = {
+  name: '',
+  about: '',
+  phase: '',
+  link: '',
+  image: '',
+}
+
+const ProjectForm = ({onAddProject}) => {
+  const [formData, setFormData] = useState(initialFormState)
+  
+  const handleOnChange = (e) => {
+    const {name, value} = e.target
+    setFormData(formData => {
+      return {
+        ...formData,
+        [name]: value
+      }
+    })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventdefault()
+    fetch({/*projectsUrl*/}, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(req => req.json())
+    .then(newProject => {
+      onAddProject(newProject)
+    })
+    setFormData(initialFormState)
+  }
+  return (
+    <section>
+      <form className='form' autoComplete='off' onSubmit={handleSubmit}>
+        <h3>Add New Project</h3>
+        <label htmlFor='name'>Name</label>
+        <input
+        type='text'
+        id='name'
+        name='name'
+        value={formData.name}
+        onChange={handleOnChange}/>
+        <label htmlFor='about'>About</label>
+        <input
+        type='text'
+        id='about'
+        name='about'
+        value={formData.about}
+        onChange={handleOnChange}/>
+        <label htmlFor='phase'>Phase</label>
+        <select
+          name='phase'
+          id='phase'
+          value={formData.phase}
+          onChange={handleOnChange}
+        >
+          <option>Select One</option>
+          <option value={1}>Phase 1</option>
+          <option value={2}>Phase 2</option>
+          <option value={3}>Phase 3</option>
+          <option value={4}>Phase 4</option>
+          <option value={5}>Phase 5</option>
+        </select>
+        <label htmlFor="link">Project Homepage</label>
+        <input
+          type="text"
+          id="link"
+          name="link"
+          value={formData.link}
+          onChange={handleOnChange}
+        />
+        <label htmlFor="image">Screenshot</label>
+        <input 
+          type="text" 
+          id="image" 
+          name="image"
+          value={formData.image}
+          onChange={handleOnChange}
+        />
+        <button type="submit">Add Project</button>
+      </form>
+    </section>
+  );
+};
+
+export default ProjectForm
+
+```
+
+```javascript
+// ProjectList.js
+import ProjectListItem from "./ProjectListItem";
+import { useState, useEffect } from 'react';
+
+const ProjectList = ({
+  projects,
+  setSelectedPhase,
+  searchQuery,
+  setSearchQuery
+}) => {
+  const [searchInputText, setSearchInputText] = useState("");
+
+  const searchResults = projects.filter((project) => {
+    return project.name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const projectListItems = searchResults.map((project) => (
+    <ProjectListItem key={project.id} {...project} />
+  ));
+
+  const handleOnChange = (e) => setSearchInputText(e.target.value);
+
+  useEffect(() => {
+    const scheduledUpdate = setTimeout(() => {
+      setSearchQuery(searchInputText);
+    }, 300)
+    console.log('effect running');
+    return () => {
+      console.log('cleanup running');
+      clearTimeout(scheduledUpdate);
+    }
+  }, [setSearchQuery, searchInputText])
+
+  console.log('rendering');
+  return (
+    <section>
+      <h2>Projects</h2>
+      {/* <h1>Count: {count}</h1> */}
+      <div className="filter">
+        <button onClick={() => setSelectedPhase("")}>All</button>
+        <button onClick={() => setSelectedPhase("5")}>Phase 5</button>
+        <button onClick={() => setSelectedPhase("4")}>Phase 4</button>
+        <button onClick={() => setSelectedPhase("3")}>Phase 3</button>
+        <button onClick={() => setSelectedPhase("2")}>Phase 2</button>
+        <button onClick={() => setSelectedPhase("1")}>Phase 1</button>
+      </div>
+      <input type="text" placeholder="Search..." onChange={handleOnChange} />
+
+      <ul className="cards">{projectListItems}</ul>
+    </section>
+  );
+};
+
+export default ProjectList;
+```
+
+Dense stuff, honestly. Would be difficult to replicate quickly without copying the components 10 times...
+
+The meat of things lies within the `handleSumbmit` function. It takes care of the fetch request and invoking the re-render based on the result of the fetch request.
+
+```javascript
+const handleSubmit = (e) => {
+  e.preventDefault();
+  // makes a POST request using a state variable
+  fetch({/*url*/}, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+  // turns the result of the promise back into JS
+  .then(req => req.json())
+  // invokes the handler function for adding a new project which updates the projects state (an array)
+  // this leads to a rerender
+  .then(newProject => {
+    onAddProject(newProject)
+  })
+  // resets the form values
+  setFormData(initialFormState)
+}
+```
+
+## Updating Arrays in React
+
+```javascript
+
+import { useState } from 'react'
+
+const ExampleComponent = () => {
+  const [array, setArray] = useState([])
+
+  const handleAddElement = (newElement) => {
+    const updatedArray = [...array, newElement]
+    setArray(updatedArray)
+  }
+
+  const handleRemoveElement = (idToRemove) => {
+    const updatedArray = array.filter((target) => target.id !== idToRemove)
+    setArray(updatedArray)
+  }
+
+  const handleUpdateElement = (updatedElement) => {
+    const updatedArray = array.map((element) => {
+      if (element.id === updatedElement.id) {
+        return updatedElement
+      } else {
+        return element
+      }
+    })
+    setArray(updatedArray)
+  }
+}
+```
+
+Once more, for posterity.
+
+```javascript
+
+import { useState } from 'react'
+
+const ExampleComponent = () => {
+  const [array, setArray] = useState([])
+
+  const handleAddElement = (newElement) => {
+    const updatedArray = [...array, newElement]
+    setArray(updatedArray)
+  }
+
+  const handleRemoveElement =  (idToRemove) => {
+    const updatedArray = array.filter((target) => target.id !== idToRemove)
+    setArray(updatedArray)
+  }
+
+  const handleUpdateElement = (updatedElement) => {
+    const updatedArray = array.map((element) => {
+      if (element.id === updatedElement.id) {
+        return updatedElement
+      } else {
+        return element
+      }
+    })
+    setArray(updatedArray)
+  }
+}
+
+```
+Honestly, I don't even know if the above code works! There could be a single error that I keep repeating in my practice. That's not fun. I'll test everything later.
+
+For now, though, let's write everything two more times.
+
+```javascript
+import { useState } from 'react'
+
+const ExampleComponent = () => {
+  const [array, setArray] = useState([])
+
+  const handleAddElement = (newElement) => {
+    const updatedArray = [...array, newElement]
+    setArray(updatedArray)
+  }
+
+  const handleRemoveElement = (idToRemove) => {
+    const updatedArray = array.filter((target) => target.id !== idToRemove)
+    setArray(updatedArray)
+  }
+
+  const handleUpdateElement = (updatedElement) => {
+    const updatedArray = array.map((element) => {
+      if (element.id === updatedElement.id) {
+        return updatedElement
+      } else {
+        return element
+      }
+    })
+    setArray(updatedArray)
+  }
+}
+```
+
+```javascript
+import { useState } from 'react'
+
+const ExampleComponent = () => {
+  const [array, setArray] = useState([])
+
+  const handleAddElement = (newElement) => {
+    const updatedArray = [...array, newElement]
+    setArray(updatedArray)
+  }
+
+  const handleRemove = (idToRemove) => {
+    const updatedArray = array.filter((target) => target.id !== idToRemove)
+    setArray(updatedArray)
+  }
+
+  const handleUpdateElement = (updatedElement) => {
+    const updatedArray = array.map((element) => {
+      if (element.id === updatedElement.id) {
+        return updatedElement
+      } else {
+        return element
+      }
+    })
+    setArray(updatedArray)
+  }
+}
+
+```
+
+Looks good enough. Time to move on.
+
+### Using Inputs As Search Forms
+
+Conceptually, you are limiting what is rendered to the page to items whose name inlcudes the value of the search box.
+
+In order to do this, you need the following:
+
+A state variable that determines what renders
+A callback function that filters the array of possible elements by the value of the state variable
+A child component with an input to serve as the listener for that callback function
+A child component to display the elements
+
+Here's how this works out in the plant mock:
+
+```javascript
+
+// Note that plants is an array of plants we manage in state/pull from the database
+// State Variable:
+
+const [searchTerm, setSearchTerm] = useState('')
+
+// Filter function
+
+const searchedPlants = plants.filter((plant => {
+  return plant.name.toLowerCase().includes(searchTerm.toLowerCase())
+}))
+
+// Pass these as props:
+
+  <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+  <PlantList plants={searchedPlants} />
+
+```
+
+```javascript
+// Here's what's in our Search.js
+
+const Search = ({searchTerm, setSearchTerm}) => {
+  return (
+    <div className="searchbar">
+      <label htmlFor="search">Search Plants:</label>
+      <input
+        type="text"
+        id="search"
+        placeholder="Type a name to search..."
+        value={searchTerm}
+        onChange={(e) =>  {
+          console.log("Searching...")
+          setSearchTerm(e.target.value)
+        }}
+      />
+    </div>
+  );
+}
+
+export default Search;
+```
+
+Not a difficult read, you just need to know what to set up. We use controlled components again. The input updates searchTerm on change, which in turn updates the value of the input. setSearchTerm will trigger a re-render of PlantList on each of the input changes, and will render the value of searchTerm as the current input value.
+
+This is particularly important for the variable searchedPlants, which is what actually uses the search term to change the array of rendered plants. The plants prop that PlantsList receives will be updated along with the re-renders.
+
+So, to go over it again, here's what happens:
+
+1. searchTerm is a state managed in PlantList.
+2. searchedPlants is a filtered version of plants that will update on every re-render caused by setSearchTerm
+3. searchTerm and setSearchTerm are passed to Search.js
+4. searchedPlants is passed into PlantList. Every time the filtered array changes, a re-render occurs, passing an up-to-date searchedPlants array.
+5. Within Search.js, we establish that a text input field is a controlled component by setting its value to searchTerm and giving it on onChange event to setSearchTerm as e.target.value
+6. Change events in the Search.js input invoke the setSearchTerm function which means we will re-render the page, affecting the displayed plants since the array that is passed down to PlantList is filtered by searchTerm.
+
+Yuck.
+
+
+
+
