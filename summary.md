@@ -1,0 +1,4 @@
+React is a library that, for purposes of Phase 2, you will use to manage *components* and *states.* These things make it easier to render elements on a page dynamically. You could just use React to do the same things you would do in vanilla JavaScript, but it excels at allowing a user to interact with a webpage.
+
+[This is what Babel does under the hood.](https://babeljs.io/repl/#?browsers=defaults%2C%20not%20ie%2011%2C%20not%20ie_mob%2011&build=&builtIns=false&corejs=3.21&spec=false&loose=false&code_lz=MYewdgzgLgBApgGzgWzmWBeGAeAFgRgD4AJRBEAGhgHcQAnBAEwEJsB6AwgbgChRJY_KAEMAlmDh0YWRiGABXVOgB0AczhQAokiVQAQgE8AkowAUAcjogQUcwEpeAJTjDgUACIB5ALLK6aRklTRBQ0KCohMQk6Bx4gA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=false&timeTravel=false&sourceType=module&lineWrap=true&presets=react&prettier=false&targets=&version=7.18.9&externalPlugins=&assumptions=%7B%7D)
+

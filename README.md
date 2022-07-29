@@ -1542,10 +1542,10 @@ Conceptually, you are limiting what is rendered to the page to items whose name 
 
 In order to do this, you need the following:
 
-A state variable that determines what renders
-A callback function that filters the array of possible elements by the value of the state variable
-A child component with an input to serve as the listener for that callback function
-A child component to display the elements
+- A state variable that determines what renders
+- A callback function that filters the array of possible elements by the value of the state variable
+- A child component with an input to serve as the listener for that callback function
+- A child component to display the elements
 
 Here's how this works out in the plant mock:
 
@@ -1607,6 +1607,11 @@ So, to go over it again, here's what happens:
 6. Change events in the Search.js input invoke the setSearchTerm function which means we will re-render the page, affecting the displayed plants since the array that is passed down to PlantList is filtered by searchTerm.
 
 Yuck.
+
+### Day 9 ish
+
+Code challenge over. Let's talk about react from the ground up.
+
 
 
 
