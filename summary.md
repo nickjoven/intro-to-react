@@ -120,7 +120,7 @@ const AnotherComponent = () => {
 
 ## Components
 
-You will generally write React components as functions with arrow syntax. They will occupy their own separate files. If your component is called Form, your file should be called `Form.js`.
+You will generally write React components as functions with arrow syntax. Conventionally, they will have uppercase names. They will occupy their own separate files. If your component is called Form, your file should be called `Form.js`.
 
 ```javascript
 const Banner = () => {
